@@ -1,21 +1,26 @@
 async function monitorAsk() {
     while (true) {
-        keepShowingNotifications = true;
-        switchToTab(['Tranzactionare', 'Trading']);
+        try {
+            keepShowingNotifications = true;
+            switchToTab(['Tranzactionare', 'Trading']);
         
-        const currentMinAsk = await getMinAskFromOrderBook();
-        if (currentMinAsk <= askThreshold) {
-            while (keepShowingNotifications) {
-                const notification = new Notification(`${ticker} is at or below ask threshold!`);
-                notification.onclick = () => { keepShowingNotifications = false; }
-                notification.onclose = () => { keepShowingNotifications = false; }
-                await delay(10000);
+            const currentMinAsk = await getMinAskFromOrderBook();
+            if (currentMinAsk <= askThreshold) {
+                while (keepShowingNotifications) {
+                    const notification = new Notification(`${ticker} is at or below ask threshold!`);
+                    notification.onclick = () => { keepShowingNotifications = false; }
+                    notification.onclose = () => { keepShowingNotifications = false; }
+                    await delay(10000);
+                }
             }
+        
+            await delay(getRandomInt(60000, 120000));
+            switchToTab(['Stiri', 'News']);
+            await delay(getRandomInt(60000, 120000));
         }
-    
-        await delay(getRandomInt(30000, 60000));
-        switchToTab(['Stiri', 'News']);
-        await delay(getRandomInt(30000, 60000));
+        catch (err) {
+            console.error(err);
+        }
     }
 }
 
